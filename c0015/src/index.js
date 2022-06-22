@@ -2,6 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
 import Batata from "./App";
+import { Home } from "./components/pages/home";
 import { Footer, Header } from "./components/footer";
 import reportWebVitals from "./reportWebVitals";
 
@@ -10,6 +11,7 @@ root.render(
   <React.StrictMode>
     <Header />
     <Batata />
+    <Home />
     <Footer />
   </React.StrictMode>
 );
