@@ -41,7 +41,7 @@ export function Card({ titulo, descricao, preco, vencido }) {
           }}
         >
           <h2>{titulo}</h2>
-          <span>{preco}</span>
+          <span>{parseFloat(preco).toFixed(2)}</span>
         </section>
       </button>
       <Modal
