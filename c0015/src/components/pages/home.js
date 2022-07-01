@@ -1,10 +1,43 @@
 import { useState, useEffect } from "react";
 import { Card } from "../structure/card";
 import { GetAllBills } from "../../mocks/bills";
+import Modal from "react-modal";
+
+const customStyles = {
+  content: {
+    display: "flex",
+    top: "50%",
+    left: "50%",
+    right: "auto",
+    bottom: "auto",
+    width: "30%",
+    height: "40%",
+    marginRight: "-50%",
+    transform: "translate(-50%, -50%)",
+  },
+};
+
+Modal.setAppElement("#root");
 
 export function Home() {
   const [bills, setBills] = useState([]);
   const [envio, setEnvio] = useState();
+  const [modaIsOpen, setModalIsOpen] = useState(false);
+  const [uniqueBill, setUniqueBill] = useState({
+    id: 0,
+    title: "",
+    price: 0,
+    description: "",
+    expirated: false,
+  });
+
+  function openModal() {
+    setModalIsOpen(true);
+  }
+
+  function closeModal() {
+    setModalIsOpen(false);
+  }
 
   console.log(bills);
   console.log("mock: ", GetAllBills);
@@ -88,16 +121,37 @@ export function Home() {
       <section className="home">
         {bills.map((bill) => {
           return (
-            <Card
+            <button
+              className="button-card"
               key={bill.id}
-              titulo={bill.title}
-              descricao={bill.description}
-              preco={bill.price}
-              vencido={bill.expirated}
-            />
+              onClick={() => {
+                setUniqueBill(bill);
+                openModal();
+              }}
+            >
+              <Card
+                titulo={bill.title}
+                descricao={bill.description}
+                preco={bill.price}
+                vencido={bill.expirated}
+              />
+            </button>
           );
         })}
       </section>
+      <Modal
+        isOpen={modaIsOpen}
+        onRequestClose={closeModal}
+        style={customStyles}
+      >
+        <div>
+          <button onClick={closeModal}>x</button>
+          <h2>{uniqueBill.title}</h2>
+          <h3>{uniqueBill.description}</h3>
+          <h3>{`Venceu: ${uniqueBill.expirated}`}</h3>
+          <span>{uniqueBill.price}</span>
+        </div>
+      </Modal>
     </section>
   );
 }
