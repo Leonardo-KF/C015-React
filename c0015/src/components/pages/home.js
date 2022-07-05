@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Card } from "../structure/card";
-import { GetAllBills } from "../../mocks/bills";
 import Modal from "react-modal";
+import { billApi } from "../../utils/api/bill.api";
 
 const customStyles = {
   content: {
@@ -22,6 +22,7 @@ Modal.setAppElement("#root");
 export function Home() {
   const [bills, setBills] = useState([]);
   const [envio, setEnvio] = useState();
+  const [search, setSearch] = useState("");
   const [modaIsOpen, setModalIsOpen] = useState(false);
   const [uniqueBill, setUniqueBill] = useState({
     id: 0,
@@ -39,13 +40,16 @@ export function Home() {
     setModalIsOpen(false);
   }
 
-  console.log(bills);
-  console.log("mock: ", GetAllBills);
+  async function findBillById(id) {
+    openModal();
+    const billById = await billApi.getBillById(id);
+    console.log(billById);
+    setUniqueBill(billById);
+  }
 
   async function getBills() {
-    const req = await fetch("http://localhost:5000/bills");
-    const bills = await req.json();
-    setBills(bills);
+    const allBills = await billApi.getAllBills();
+    setBills(allBills);
     setEnvio(false);
   }
 
@@ -64,14 +68,9 @@ export function Home() {
       expirated: event.target.expirated.value,
     };
 
-    let existId = false;
     let existTitle = false;
 
     bills.map((bill) => {
-      if (bill.id === newBill.id) {
-        existId = true;
-        alert("Bill id already exists");
-      }
       if (bill.title === newBill.title) {
         existTitle = true;
         alert("Bill title already exists");
@@ -79,14 +78,9 @@ export function Home() {
     });
 
     // UI Otimista
-    if (!existId && !existTitle) {
+    if (!existTitle) {
       setEnvio(true);
-      const req = await fetch("http://localhost:5000/bills", {
-        method: "POST",
-        body: JSON.stringify(newBill),
-        headers: new Headers({ "Content-Type": "application/json" }),
-      });
-      console.log(await req.json());
+      const bill = await billApi.createBill(newBill);
     }
   }
 
@@ -95,49 +89,69 @@ export function Home() {
       <div className="test">
         <form onSubmit={handleSubmit} className="form">
           <section className="section-inputs">
-            <label>Id:</label>
-            <input name="id" type="text"></input>
+            <input
+              name="titulo"
+              type="text"
+              placeholder="Digite o titulo da conta"
+            ></input>
           </section>
           <section className="section-inputs">
-            <label>Title:</label>
-            <input name="titulo" type="text"></input>
+            <input
+              name="price"
+              type="number"
+              placeholder="Digite o valor da conta"
+            ></input>
           </section>
           <section className="section-inputs">
-            <label>Price:</label>
-            <input name="price" type="number"></input>
+            <input
+              name="description"
+              type="text"
+              placeholder="Digite a descrição"
+            ></input>
           </section>
           <section className="section-inputs">
-            <label>Description:</label>
-            <input name="description" type="text"></input>
-          </section>
-          <section className="section-inputs">
-            <label>Expirated:</label>
-            <input name="expirated" type="select"></input>
+            <input
+              name="expirated"
+              type="select"
+              placeholder="conta expirou?"
+            ></input>
           </section>
           <button type="submit">Create Bill</button>
         </form>
       </div>
-
+      <section className="section-inputs">
+        <label className="label">Pesquisa</label>
+        <input
+          type="text"
+          placeholder="Digite o titulo da conta"
+          onChange={(event) => {
+            setSearch(event.target.value);
+          }}
+        ></input>
+      </section>
       <section className="home">
-        {bills.map((bill) => {
-          return (
-            <button
-              className="button-card"
-              key={bill.id}
-              onClick={() => {
-                setUniqueBill(bill);
-                openModal();
-              }}
-            >
-              <Card
-                titulo={bill.title}
-                descricao={bill.description}
-                preco={bill.price}
-                vencido={bill.expirated}
-              />
-            </button>
-          );
-        })}
+        {bills
+          .filter((bill) =>
+            bill.title.toLowerCase().includes(search.toLowerCase())
+          )
+          .map((bill) => {
+            return (
+              <button
+                className="button-card"
+                key={bill.id}
+                onClick={() => {
+                  findBillById(bill.id);
+                }}
+              >
+                <Card
+                  titulo={bill.title}
+                  descricao={bill.description}
+                  preco={bill.price}
+                  vencido={bill.expirated}
+                />
+              </button>
+            );
+          })}
       </section>
       <Modal
         isOpen={modaIsOpen}
