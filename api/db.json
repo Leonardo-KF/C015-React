@@ -1,52 +1,38 @@
 {
   "bills": [
     {
-      "id": 1,
-      "title": "Conta de luz",
-      "price": 120.97,
-      "description": "Uma conta de luz",
-      "expirated": false
-    },
-    {
-      "id": 2,
-      "title": "Conta de net",
-      "price": 99.99,
-      "description": "Uma conta de internet",
-      "expirated": false
-    },
-    {
-      "id": 3,
-      "title": "Conta de celular",
-      "price": 50,
-      "description": "Uma conta de celular",
-      "expirated": false
-    },
-    {
-      "title": "Conta de net",
-      "price": 99.99,
-      "description": "Uma conta de internet",
-      "expirated": false,
-      "id": 4
-    },
-    {
-      "title": "teste2",
+      "title": "Conta de internet 2",
       "description": "Boa sorte",
-      "price": 6,
+      "price": 20,
+      "expirated": "true",
+      "id": 1
+    },
+    {
+      "title": "Conta de net",
+      "description": "Uma conta de internet",
+      "price": 80,
       "expirated": "false",
+      "id": 2
+    },
+    {
+      "title": "Conta de internet",
+      "description": "Uma conta de internet",
+      "price": 70.99,
+      "expirated": "true",
       "id": 5
     },
     {
-      "title": "Envio de conta",
-      "description": "Boa sorte",
-      "price": 50,
+      "title": "Conta de teste",
+      "description": "uma descricao",
+      "price": 20,
       "expirated": "false",
       "id": 6
     },
     {
-      "title": "Envio de conta teste",
-      "description": "uma descricao",
-      "price": 520,
-      "expirated": "false",
+      "title": "Envio de conta",
+      "description": "Uma conta de internet",
+      "price": 10,
+      "expirated": "true",
       "id": 7
     }
   ]

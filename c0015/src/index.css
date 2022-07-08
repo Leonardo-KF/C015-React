@@ -45,10 +45,6 @@ code {
   padding: 0;
 }
 
-.ReactModal__Overlay {
-  background-color: pink !important;
-}
-
 .page {
   display: flex;
   flex-direction: column;
@@ -80,4 +76,40 @@ code {
   width: 50%;
   height: 15%;
   padding: 10px;
+}
+
+.buttonCloseModal {
+  display: flex;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0px;
+}
+
+.divModalButton {
+  display: flex;
+  width: 100%;
+  justify-content: flex-end;
+}
+
+.modalButtonsArea {
+  padding: 5px 0px 5px 0px;
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.editButton {
+  display: flex;
+  background-color: lightblue;
+  border: none;
+  border-radius: 5px;
+}
+
+.deleteButton {
+  display: flex;
+  background-color: red;
+  border: none;
+  border-radius: 5px;
 }

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Card } from "../structure/card";
 import Modal from "react-modal";
 import { billApi } from "../../utils/api/bill.api";
+import { IoIosCloseCircleOutline } from "react-icons/io";
 
 const customStyles = {
   content: {
@@ -10,10 +11,13 @@ const customStyles = {
     left: "50%",
     right: "auto",
     bottom: "auto",
-    width: "30%",
-    height: "40%",
+    minWidth: "30%",
+    minHeight: "30%",
     marginRight: "-50%",
     transform: "translate(-50%, -50%)",
+    justifyContent: "center",
+    alignItems: "flex-start",
+    padding: "10px 15px 10px 15px ",
   },
 };
 
@@ -24,6 +28,7 @@ export function Home() {
   const [envio, setEnvio] = useState();
   const [search, setSearch] = useState("");
   const [modaIsOpen, setModalIsOpen] = useState(false);
+  const [controlUpdate, setControlUpdate] = useState(false);
   const [uniqueBill, setUniqueBill] = useState({
     id: 0,
     title: "",
@@ -57,6 +62,13 @@ export function Home() {
     getBills();
   }, [envio]);
 
+  function cleanForm(event) {
+    event.target.titulo.value = "";
+    event.target.description.value = "";
+    event.target.price.value = "";
+    event.target.expirated.value = "";
+  }
+
   async function handleSubmit(event) {
     event.preventDefault();
     // evento.alvo.nome.valor
@@ -68,20 +80,30 @@ export function Home() {
       expirated: event.target.expirated.value,
     };
 
-    let existTitle = false;
-
-    bills.map((bill) => {
-      if (bill.title === newBill.title) {
-        existTitle = true;
-        alert("Bill title already exists");
-      }
-    });
-
-    // UI Otimista
-    if (!existTitle) {
-      setEnvio(true);
+    setEnvio(true);
+    if (controlUpdate) {
+      await billApi.updateBill(uniqueBill.id, newBill);
+      setControlUpdate(false);
+      cleanForm(event);
+    } else {
       const bill = await billApi.createBill(newBill);
+      cleanForm(event);
     }
+  }
+
+  async function editBill() {
+    setControlUpdate(true);
+    closeModal();
+  }
+
+  async function deleteBill() {
+    await billApi.deleteBill(uniqueBill.id);
+    closeModal();
+    setEnvio(true);
+  }
+
+  function cancelUpdate() {
+    setControlUpdate(false);
   }
 
   return (
@@ -93,6 +115,7 @@ export function Home() {
               name="titulo"
               type="text"
               placeholder="Digite o titulo da conta"
+              defaultValue={controlUpdate ? uniqueBill.title : ""}
             ></input>
           </section>
           <section className="section-inputs">
@@ -100,6 +123,8 @@ export function Home() {
               name="price"
               type="number"
               placeholder="Digite o valor da conta"
+              step="0.01"
+              defaultValue={controlUpdate ? uniqueBill.price : ""}
             ></input>
           </section>
           <section className="section-inputs">
@@ -107,6 +132,7 @@ export function Home() {
               name="description"
               type="text"
               placeholder="Digite a descrição"
+              defaultValue={controlUpdate ? uniqueBill.description : ""}
             ></input>
           </section>
           <section className="section-inputs">
@@ -114,9 +140,17 @@ export function Home() {
               name="expirated"
               type="select"
               placeholder="conta expirou?"
+              defaultValue={controlUpdate ? uniqueBill.expirated : ""}
             ></input>
           </section>
-          <button type="submit">Create Bill</button>
+          {controlUpdate ? (
+            <div className="pageButtonsArea">
+              <button type="submit">Edit Bill</button>
+              <button onClick={cancelUpdate}>Cancel</button>
+            </div>
+          ) : (
+            <button type="submit">Create Bill</button>
+          )}
         </form>
       </div>
       <section className="section-inputs">
@@ -159,11 +193,25 @@ export function Home() {
         style={customStyles}
       >
         <div>
-          <button onClick={closeModal}>x</button>
-          <h2>{uniqueBill.title}</h2>
-          <h3>{uniqueBill.description}</h3>
-          <h3>{`Venceu: ${uniqueBill.expirated}`}</h3>
-          <span>{uniqueBill.price}</span>
+          <div className="divModalButton">
+            <button className="buttonCloseModal" onClick={closeModal}>
+              <IoIosCloseCircleOutline size={20} color="red" />
+            </button>
+          </div>
+          <div className="modalInfo">
+            <h2>{uniqueBill.title}</h2>
+            <h3>{uniqueBill.description}</h3>
+            <h3>{`Venceu: ${uniqueBill.expirated}`}</h3>
+            <span>{uniqueBill.price}</span>
+          </div>
+          <div className="modalButtonsArea">
+            <button onClick={editBill} className="editButton">
+              Editar
+            </button>
+            <button onClick={deleteBill} className="deleteButton">
+              Deletar
+            </button>
+          </div>
         </div>
       </Modal>
     </section>
